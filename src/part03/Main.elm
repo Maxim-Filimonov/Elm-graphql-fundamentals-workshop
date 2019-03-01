@@ -14,8 +14,12 @@ import RemoteData exposing (RemoteData)
 import Time
 
 
+type alias Package =
+    { latestVersion : String }
+
+
 type alias Response =
-    List ()
+    List Package
 
 
 query : SelectionSet Response RootQuery
@@ -23,9 +27,19 @@ query =
     Query.allPackages packageSelection
 
 
-packageSelection : SelectionSet () ElmStuff.Object.Package
+latestVersion : List String -> String
+latestVersion versions =
+    versions
+        |> List.reverse
+        |> List.head
+        |> Maybe.withDefault "???"
+
+
+packageSelection : SelectionSet Package ElmStuff.Object.Package
 packageSelection =
-    SelectionSet.empty
+    ElmStuff.Object.Package.versions
+        |> SelectionSet.map latestVersion
+        |> SelectionSet.map (\version -> { latestVersion = version })
 
 
 makeRequest : Cmd Msg

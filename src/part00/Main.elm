@@ -16,12 +16,12 @@ import Time
 
 
 type alias Response =
-    ()
+    String
 
 
-query : SelectionSet Response RootQuery
+query : SelectionSet String RootQuery
 query =
-    SelectionSet.empty
+    Query.randomQuote
 
 
 makeRequest : Cmd Msg

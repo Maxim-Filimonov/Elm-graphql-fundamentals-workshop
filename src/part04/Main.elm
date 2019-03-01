@@ -15,14 +15,23 @@ import RemoteData exposing (RemoteData)
 
 
 type alias Response =
-    ()
+    (String)
 
 
 query : SelectionSet Response RootQuery
-query =
-    SelectionSet.empty
+query = SelectionSet.map2 percentage  allPackagesWithAuthor favoriteAuthors
+--    favoriteAuthors
 
+percentage : List String -> List String -> String
+percentage allAuthors packageAuthors = "11%"
 
+allPackagesWithAuthor : SelectionSet (List String) RootQuery
+allPackagesWithAuthor = Query.allPackages authorName
+
+authorName = ElmStuff.Object.Package.author ElmStuff.Object.Author.name
+
+favoriteAuthors: SelectionSet (List String) RootQuery
+favoriteAuthors = Query.favoritePackages authorName
 makeRequest : Cmd Msg
 makeRequest =
     query

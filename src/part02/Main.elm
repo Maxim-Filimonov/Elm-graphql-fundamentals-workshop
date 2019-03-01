@@ -15,12 +15,12 @@ import Time
 
 
 type alias Response =
-    String
+    List String
 
 
 query : SelectionSet Response RootQuery
 query =
-    Query.randomQuote
+    Query.allPackages ElmStuff.Object.Package.title
 
 
 makeRequest : Cmd Msg
