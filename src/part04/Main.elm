@@ -20,7 +20,7 @@ type alias Response =
 
 query : SelectionSet Response RootQuery
 query =
-    SelectionSet.empty
+    SelectionSet.map
 
 
 makeRequest : Cmd Msg
