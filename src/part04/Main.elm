@@ -15,23 +15,54 @@ import RemoteData exposing (RemoteData)
 
 
 type alias Response =
-    (String)
+    String
 
 
 query : SelectionSet Response RootQuery
-query = SelectionSet.map2 percentage  allPackagesWithAuthor favoriteAuthors
---    favoriteAuthors
+query =
+    SelectionSet.map2 percentage totalNumberOfPackages favoriteAuthors
 
-percentage : List String -> List String -> String
-percentage allAuthors packageAuthors = "11%"
 
-allPackagesWithAuthor : SelectionSet (List String) RootQuery
-allPackagesWithAuthor = Query.allPackages authorName
+type alias FavoriteAuthor =
+    { name : String
+    , numberOfPackages : Int
+    }
 
-authorName = ElmStuff.Object.Package.author ElmStuff.Object.Author.name
 
-favoriteAuthors: SelectionSet (List String) RootQuery
-favoriteAuthors = Query.favoritePackages authorName
+favoriteAuthors : SelectionSet (List FavoriteAuthor) RootQuery
+favoriteAuthors =
+    Query.favoritePackages authorSelection
+
+
+authorSelection : SelectionSet FavoriteAuthor ElmStuff.Object.Package
+authorSelection =
+    SelectionSet.map2 FavoriteAuthor
+        (ElmStuff.Object.Package.author ElmStuff.Object.Author.name)
+        (favPackageSelection |> SelectionSet.map List.length)
+
+
+favPackageSelection : SelectionSet (List ()) ElmStuff.Object.Package
+favPackageSelection =
+    ElmStuff.Object.Package.author (ElmStuff.Object.Author.packages SelectionSet.empty)
+
+
+totalNumberOfPackages : SelectionSet Int RootQuery
+totalNumberOfPackages =
+    Query.allPackages SelectionSet.empty |> SelectionSet.map List.length
+
+
+percentage : Int -> List FavoriteAuthor -> String
+percentage allPackages favoritePackageAuthors =
+    let
+        totalFavoritePackages =
+            List.sum <| List.map .numberOfPackages favoritePackageAuthors
+
+        percentageOfFav =
+            allPackages // totalFavoritePackages
+    in
+    String.fromInt percentageOfFav ++ "%"
+
+
 makeRequest : Cmd Msg
 makeRequest =
     query
