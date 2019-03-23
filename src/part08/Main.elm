@@ -19,11 +19,17 @@ type alias Response =
     CurrentWeather
 
 
+units : Query.CurrentWeatherOptionalArguments -> Query.CurrentWeatherOptionalArguments
+units optionals =
+    { optionals | units = Present WeatherOptionalArgs.Enum.TemperatureUnit.Fahrenheit }
+
+
 query : SelectionSet Response RootQuery
 query =
     -- you can use weatherSelection
     -- you'll need to figure out which required arguments to pass in
-    SelectionSet.succeed hardcodedWeather
+    -- SelectionSet.succeed hardcodedWeather
+    Query.currentWeather units { city = "Moscow" } weatherSelection
 
 
 weatherSelection : SelectionSet CurrentWeather WeatherOptionalArgs.Object.CurrentWeather

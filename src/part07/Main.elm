@@ -23,7 +23,11 @@ query : SelectionSet Response RootQuery
 query =
     -- you can use weatherSelection
     -- you'll need to figure out which required arguments to pass in
-    SelectionSet.succeed hardcodedWeather
+    Query.currentWeather { city = "Moscow", units = WeatherTwo.Enum.TemperatureUnit.Fahrenheit } weatherSelection
+
+
+
+-- SelectionSet.succeed hardcodedWeather
 
 
 weatherSelection : SelectionSet CurrentWeather WeatherTwo.Object.CurrentWeather

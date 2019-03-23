@@ -19,7 +19,7 @@ type alias Response =
 
 query : SelectionSet Response RootQuery
 query =
-    Query.currentWeather weatherSelection
+    Query.currentWeather weatherSelectionMap
 
 
 type alias CurrentWeather =
@@ -28,16 +28,31 @@ type alias CurrentWeather =
     , country : String
     , lat : Float
     , lon : Float
+    , windSpeed : Float
+    , windDirection : String
     }
 
 
 weatherSelection =
-    SelectionSet.map5 CurrentWeather
+    SelectionSet.succeed CurrentWeather
+        |> with CurrentWeather.temperature
+        |> with CurrentWeather.city
+        |> with CurrentWeather.country
+        |> with CurrentWeather.lat
+        |> with CurrentWeather.lon
+        |> with CurrentWeather.windSpeed
+        |> with CurrentWeather.windDirection
+
+
+weatherSelectionMap =
+    SelectionSet.map7 CurrentWeather
         CurrentWeather.temperature
         CurrentWeather.city
         CurrentWeather.country
         CurrentWeather.lat
         CurrentWeather.lon
+        CurrentWeather.windSpeed
+        CurrentWeather.windDirection
 
 
 makeRequest : Cmd Msg
